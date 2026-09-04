@@ -47,6 +47,12 @@ while ($listener.IsListening) {
         $relativePath = $rawPath.TrimStart("/").Replace("/", "\")
         $filePath = Join-Path "c:\Users\marce\GTA 6" $relativePath
 
+        if (Test-Path $filePath -PathType Container) {
+            $filePath = Join-Path $filePath "index.html"
+        } elseif (-not (Test-Path $filePath -PathType Leaf) -and (Test-Path "$filePath.html" -PathType Leaf)) {
+            $filePath = "$filePath.html"
+        }
+
         if (Test-Path $filePath -PathType Leaf) {
             $ext = [System.IO.Path]::GetExtension($filePath).ToLower()
             if ($mimeTypes.ContainsKey($ext)) {

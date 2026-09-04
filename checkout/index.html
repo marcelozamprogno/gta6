@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout Seguro | Pack +2000 Vídeos GTA 6</title>
+  <link rel="icon" href="/assets/favicon.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #08010f;
+      --bg-card: #140728;
+      --bg-card-hover: #1c0b38;
+      --line: #2d144e;
+      --ink: #f6f1ff;
+      --muted: #b9a9d6;
+      --pink: #ff2e88;
+      --pink2: #ff5fa8;
+      --cyan: #21d4fd;
+      --purple: #7b2ff7;
+      --gold: #ffd84d;
+      --green: #25d366;
+      --grad: linear-gradient(100deg,#5b6ee1,#9b46d4 28%,#ff2e88 52%,#ff9d5c 72%,#9b46d4 88%,#5b6ee1);
+      --grad-pink: linear-gradient(135deg, #ff2e88, #7b2ff7);
+      --grad-gold: linear-gradient(95deg, #ffd84d, #ff9d5c);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+    
+    .display { font-family: 'Outfit', sans-serif; }
+    
+    /* ---- TOP SCARCITY & SECURITY BAR ---- */
+    .topbar {
+      background: linear-gradient(90deg, #1b0033, var(--pink), var(--purple), #1b0033);
+      background-size: 200% 100%;
+      animation: gradientShift 6s ease infinite;
+      color: #fff;
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(255, 46, 136, 0.35);
+      position: relative;
+      z-index: 100;
+    }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+    .topbar span b { color: var(--gold); }
+    .timer-badge { background: rgba(0,0,0,0.3); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(255,216,77,0.4); font-family: monospace; font-size: 14px; color: var(--gold); }
+
+    /* ---- HEADER ---- */
+    header {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(12, 4, 32, 0.8);
+      backdrop-filter: blur(10px);
+    }
+    .header-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-area { display: flex; align-items: center; gap: 12px; }
+    .logo-text { font-family: 'Outfit'; font-weight: 900; font-size: 24px; background-image: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.02em; }
+    .secure-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #4ade80; background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.3); padding: 6px 12px; border-radius: 100px; }
+
+    /* ---- MAIN CONTAINER ---- */
+    .container {
+      max-width: 1100px;
+      width: 100%;
+      margin: 30px auto;
+      padding: 0 20px;
+      flex: 1;
+    }
+
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 28px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .checkout-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ---- CARDS ---- */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .card-title {
+      font-family: 'Outfit';
+      font-weight: 900;
+      font-size: 20px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+    .card-title .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--grad-pink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(255,46,136,0.4);
+    }
+
+    /* ---- PRODUCT PLAN SELECTOR ---- */
+    .plans-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .plan-card {
+      background: rgba(8, 1, 15, 0.6);
+      border: 2px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .plan-card:hover {
+      border-color: rgba(255, 46, 136, 0.5);
+      background: var(--bg-card-hover);
+    }
+
+    .plan-card.selected {
+      border-color: var(--pink);
+      background: linear-gradient(135deg, rgba(255, 46, 136, 0.12), rgba(123, 47, 247, 0.12));
+      box-shadow: 0 0 25px rgba(255, 46, 136, 0.25);
+    }
+
+    .plan-info { display: flex; align-items: center; gap: 14px; }
+    .radio-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+    .plan-card.selected .radio-circle {
+      border-color: var(--pink);
+      background: var(--pink);
+    }
+    .plan-card.selected .radio-circle::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .plan-details h4 { font-family: 'Outfit'; font-size: 17px; font-weight: 800; color: #fff; }
+    .plan-details p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .plan-details .badge-best { display: inline-block; background: var(--grad-gold); color: #180016; font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 100px; margin-left: 8px; text-transform: uppercase; }
+
+    .plan-price { text-align: right; }
+    .plan-price .amount { font-family: 'Outfit'; font-size: 22px; font-weight: 900; color: #fff; }
+    .plan-price .period { font-size: 11px; color: var(--cyan); font-weight: 700; display: block; }
+
+    /* ---- FORM FIELDS ---- */
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .form-group label span { color: var(--pink); }
+
+    .input-wrapper {
+      position: relative;
+    }
+    .input-wrapper svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      fill: var(--muted);
+      transition: 0.2s;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #090214;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 14px 14px 44px;
+      color: #fff;
+      font-size: 14.5px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 15px rgba(255, 46, 136, 0.3);
+      background: #0e041f;
+    }
+    .form-control:focus + svg { fill: var(--pink); }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* ---- PAYMENT METHOD (PIX HIGHLIGHT) ---- */
+    .pix-box {
+      background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(33, 212, 253, 0.05));
+      border: 1.5px solid var(--green);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(37, 211, 102, 0.15);
+    }
+    .pix-info { display: flex; align-items: center; gap: 14px; }
+    .pix-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(37, 211, 102, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pix-icon svg { width: 26px; height: 26px; fill: var(--green); }
+    .pix-text h4 { font-family: 'Outfit'; font-weight: 800; font-size: 17px; color: #fff; }
+    .pix-text p { font-size: 12px; color: var(--green); font-weight: 700; }
+    .pix-badge { background: var(--green); color: #04140b; font-weight: 900; font-size: 11px; padding: 4px 10px; border-radius: 100px; text-transform: uppercase; }
+
+    /* ---- BUTTONS ---- */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(95deg, var(--gold), var(--pink) 55%, var(--purple));
+      color: #180016;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 20px;
+      padding: 18px;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      box-shadow: 0 12px 35px rgba(255, 46, 136, 0.45);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-submit::after {
+      content: "";
+      position: absolute;
+      top: 0; left: -60%;
+      width: 40%; height: 100%;
+      background: linear-gradient(110deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+      animation: shine 3.2s infinite;
+    }
+    @keyframes shine { 0% { left: -60%; } 55%, 100% { left: 130%; } }
+
+    .btn-submit:hover {
+      transform: translateY(-2px) scale(1.01);
+      filter: brightness(1.08);
+      box-shadow: 0 16px 45px rgba(255, 46, 136, 0.6);
+    }
+
+    /* ---- ORDER SUMMARY (RIGHT SIDE) ---- */
+    .summary-card {
+      position: sticky;
+      top: 24px;
+    }
+
+    .prod-preview {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 16px;
+    }
+    .prod-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 14px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      background: #090214;
+    }
+    .prod-title { font-family: 'Outfit'; font-weight: 800; font-size: 16px; color: #fff; line-height: 1.2; }
+    .prod-desc { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    .summary-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13.5px;
+      margin-bottom: 16px;
+    }
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+    }
+    .summary-item.total {
+      border-top: 1px dashed var(--line);
+      padding-top: 12px;
+      margin-top: 6px;
+      font-size: 18px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .summary-item.total .price-tag {
+      font-family: 'Outfit';
+      font-size: 28px;
+      color: var(--pink2);
+    }
+
+    .bonuses-box {
+      background: rgba(123, 47, 247, 0.1);
+      border: 1px solid rgba(123, 47, 247, 0.3);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 16px;
+    }
+    .bonuses-title { font-family: 'Outfit'; font-weight: 800; font-size: 13px; color: var(--gold); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .bonuses-list { list-style: none; font-size: 12.5px; color: #e8ddff; display: flex; flex-direction: column; gap: 6px; }
+    .bonuses-list li { display: flex; items-center: gap: 6px; }
+    .bonuses-list li::before { content: '✓'; color: #4ade80; font-weight: 900; }
+
+    .guarantee-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+    .guarantee-badge img { width: 50px; height: 50px; }
+    .guarantee-text h5 { font-family: 'Outfit'; font-weight: 800; font-size: 13px; color: #fff; }
+    .guarantee-text p { font-size: 11.5px; color: var(--muted); }
+
+    /* ---- MODAL DO PIX GENERATED ---- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(4, 1, 10, 0.88);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+
+    .pix-modal {
+      background: linear-gradient(180deg, #180b2e, #0c0420);
+      border: 2px solid var(--green);
+      border-radius: 24px;
+      max-width: 460px;
+      width: 100%;
+      padding: 28px 24px;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(37, 211, 102, 0.3);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .pix-qr-container {
+      background: #fff;
+      padding: 16px;
+      border-radius: 18px;
+      width: 210px;
+      height: 210px;
+      margin: 18px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    }
+    .pix-qr-container img { width: 100%; height: 100%; object-fit: contain; }
+
+    .copia-cola-box {
+      background: #070212;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--muted);
+      word-break: break-all;
+      margin-bottom: 14px;
+      max-height: 52px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-copy {
+      width: 100%;
+      background: var(--green);
+      color: #04140b;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 16px;
+      padding: 14px;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+      transition: 0.2s;
+    }
+    .btn-copy:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+    .toast-copy {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--green);
+      color: #04140b;
+      font-weight: 800;
+      padding: 12px 24px;
+      border-radius: 100px;
+      font-size: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      z-index: 2000;
+    }
+    .toast-copy.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 30px 20px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <span>🔥 OFERTA EXCLUSIVA GTA 6: SEU PACK RESERVADO POR <span class="timer-badge" id="scarcityTimer">10:00</span> MINUTOS</span>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-wrap">
+      <div class="logo-area">
+        <a href="/" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
+          <img src="/assets/favicon.png" alt="GTA 6 Logo" height="32" style="filter: drop-shadow(0 2px 8px rgba(255,46,136,0.6));">
+          <span class="logo-text">PACK GTA 6</span>
+        </a>
+      </div>
+      <div class="secure-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        AMBIENTE 100% SEGURO
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CHECKOUT CONTENT -->
+  <div class="container">
+    <div class="checkout-grid">
+      
+      <!-- LEFT COLUMN (FORM & PLANS) -->
+      <div class="left-col">
+        
+        <!-- STEP 1: SELECT PLAN -->
+        <div class="card">
+          <div class="card-title">
+            <span class="step-num">1</span>
+            Escolha seu Plano
+          </div>
+
+          <div class="plans-selector">
+            <!-- PLAN PRO -->
+            <div class="plan-card selected" id="planCardPro" onclick="selectPlan('pro')">
+              <div class="plan-info">
+                <div class="radio-circle"></div>
+                <div class="plan-details">
+                  <h4>PLANO PRO (+2000 VÍDEOS) <span class="badge-best">MAIS VENDIDO</span></h4>
+                  <p>Acesso completo + 400 Carrosséis + 50k Cortes EUA (em Dólar) + Sorteio GTA 6</p>
+                </div>
+              </div>
+              <div class="plan-price">
+                <span class="amount">R$ 29,90</span>
+                <span class="period">Acesso Vitalício</span>
+              </div>
+            </div>
+
+            <!-- PLAN BASIC -->
+            <div class="plan-card" id="planCardBasic" onclick="selectPlan('basic')">
+              <div class="plan-info">
+                <div class="radio-circle"></div>
+                <div class="plan-details">
+                  <h4>PLANO BÁSICO (+650 VÍDEOS)</h4>
+                  <p>650 Vídeos Prontos + 50k Cortes Brasil + Bônus Iniciais</p>
+                </div>
+              </div>
+              <div class="plan-price">
+                <span class="amount">R$ 9,90</span>
+                <span class="period">Acesso Vitalício</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: USER DATA -->
+        <div class="card">
+          <div class="card-title">
+            <span class="step-num">2</span>
+            Dados do Comprador
+          </div>
+
+          <form id="checkoutForm" onsubmit="handleFormSubmit(event)">
+            <div class="form-group">
+              <label>Nome Completo <span>*</span></label>
+              <div class="input-wrapper">
+                <input type="text" class="form-control" id="fullName" placeholder="Ex: Marcelo Zamprogno" required />
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Seu Melhor E-mail (Para Receber o Acesso) <span>*</span></label>
+              <div class="input-wrapper">
+                <input type="email" class="form-control" id="email" placeholder="seuemail@exemplo.com" required />
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>CPF <span>*</span></label>
+                <div class="input-wrapper">
+                  <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)" required />
+                  <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/></svg>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>WhatsApp / Celular <span>*</span></label>
+                <div class="input-wrapper">
+                  <input type="tel" class="form-control" id="phone" placeholder="(00) 90000-0000" maxlength="15" oninput="maskPhone(this)" required />
+                  <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 3: PAYMENT METHOD -->
+            <div style="margin-top: 24px;">
+              <div class="card-title">
+                <span class="step-num">3</span>
+                Forma de Pagamento
+              </div>
+
+              <div class="pix-box">
+                <div class="pix-info">
+                  <div class="pix-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  </div>
+                  <div class="pix-text">
+                    <h4>Pagamento Via PIX</h4>
+                    <p>⚡ Liberação Imediata no Seu E-mail</p>
+                  </div>
+                </div>
+                <span class="pix-badge">APROVAÇÃO INSTANTÂNEA</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+              GERAR QR CODE PIX →
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN (ORDER SUMMARY) -->
+      <div class="right-col">
+        <div class="card summary-card">
+          <div class="card-title">Resumo do Pedido</div>
+
+          <div class="prod-preview">
+            <img src="/assets/mockup.png" alt="Mockup Pack GTA 6" class="prod-img">
+            <div>
+              <div class="prod-title" id="summaryTitle">Pack +2000 Vídeos GTA 6 PRO</div>
+              <div class="prod-desc" id="summaryDesc">Biblioteca Completa em Full HD</div>
+            </div>
+          </div>
+
+          <ul class="summary-list">
+            <li class="summary-item">
+              <span>Valor do Produto</span>
+              <span id="summaryOriginalPrice">R$ 197,00</span>
+            </li>
+            <li class="summary-item">
+              <span>Desconto de Lançamento</span>
+              <span style="color:#4ade80;" id="summaryDiscount">- R$ 167,10</span>
+            </li>
+            <li class="summary-item total">
+              <span>Total no PIX:</span>
+              <span class="price-tag" id="summaryTotalPrice">R$ 29,90</span>
+            </li>
+          </ul>
+
+          <div class="bonuses-box">
+            <div class="bonuses-title">🎁 Bônus Inclusos Hoje</div>
+            <ul class="bonuses-list" id="summaryBonusesList">
+              <li>+50.000 Cortes Virais (Brasil)</li>
+              <li>+50.000 Cortes dos EUA (Ganhe em Dólar)</li>
+              <li>+20.000 Cursos Liberados</li>
+              <li>Concorre ao Sorteio do GTA 6</li>
+              <li>Calendário 30 Dias de Lançamento</li>
+              <li>Guia & Planilha de Monetização</li>
+            </ul>
+          </div>
+
+          <div class="guarantee-badge">
+            <img src="/assets/selo-garantia.png" alt="Garantia 7 Dias">
+            <div class="guarantee-text">
+              <h5>7 Dias de Garantia</h5>
+              <p>Risco Zero! Se não gostar, devolvemos 100% do seu dinheiro sem perguntas.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PIX PAYMENT MODAL -->
+  <div class="modal-overlay" id="pixModal">
+    <div class="pix-modal">
+      <button class="modal-close" onclick="closePixModal()">✕</button>
+      <div style="font-size:36px; margin-bottom:6px;">⚡</div>
+      <h3 class="display" style="font-size:22px; font-weight:900; color:#fff;">PIX GERADO COM SUCESSO!</h3>
+      <p style="font-size:13px; color:var(--muted); margin-top:4px;">Copie o código abaixo ou escaneie o QR Code com o aplicativo do seu banco:</p>
+
+      <div class="pix-qr-container">
+        <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=00020126580014BR.GOV.BCB.PIX0136gta6pack@monetize.com.br520400005303986540529.905802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2" alt="QR Code PIX">
+      </div>
+
+      <div style="font-size:12px; font-weight:700; color:var(--gold); margin-bottom:8px;">CÓDIGO PIX COPIA E COLA:</div>
+      <div class="copia-cola-box" id="pixPayloadText">
+        00020126580014BR.GOV.BCB.PIX0136gta6pack@monetize.com.br520400005303986540529.905802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2
+      </div>
+
+      <button class="btn-copy" onclick="copyPixCode()">
+        📋 COPIAR CÓDIGO PIX
+      </button>
+
+      <div style="margin-top:16px; font-size:12px; color:var(--muted);">
+        ⏱️ Este QR Code expira em <b style="color:var(--gold);" id="pixModalTimer">14:59</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-copy" id="copyToast">
+    ✓ Código PIX Copiado com Sucesso!
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="font-family:'Outfit'; font-weight:900; font-size:18px; color:#fff; margin-bottom:8px;">PACK GTA 6 - OFICIAL</div>
+    <p>© <span id="year"></span> Agência GCC. Todos os direitos reservados. Compra 100% Criptografada e Segura.</p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    let currentPlan = 'pro';
+
+    const planData = {
+      pro: {
+        title: 'Pack +2000 Vídeos GTA 6 PRO',
+        desc: 'Biblioteca Completa em Full HD',
+        originalPrice: 'R$ 197,00',
+        discount: '- R$ 167,10',
+        price: 'R$ 29,90',
+        numericPrice: '29.90',
+        bonuses: [
+          '+50.000 Cortes Virais (Brasil)',
+          '+50.000 Cortes dos EUA (Ganhe em Dólar)',
+          '+20.000 Cursos Liberados',
+          'Concorre ao Sorteio do GTA 6',
+          'Calendário 30 Dias de Lançamento',
+          'Guia & Planilha de Monetização'
+        ]
+      },
+      basic: {
+        title: 'Pack +650 Vídeos GTA 6 Básico',
+        desc: 'Acervo Inicial + Cortes Brasil',
+        originalPrice: 'R$ 97,00',
+        discount: '- R$ 87,10',
+        price: 'R$ 9,90',
+        numericPrice: '9.90',
+        bonuses: [
+          '+50.000 Cortes Virais (Brasil)',
+          'Calendário 30 Dias de Lançamento',
+          'Guia & Planilha de Monetização',
+          'Manual Canal do Zero'
+        ]
+      },
+      downsell: {
+        title: 'Pack +2000 Vídeos GTA 6 PRO (Oferta Especial)',
+        desc: 'Desconto Exclusivo PRO',
+        originalPrice: 'R$ 197,00',
+        discount: '- R$ 177,10',
+        price: 'R$ 19,90',
+        numericPrice: '19.90',
+        bonuses: [
+          '+50.000 Cortes Virais (Brasil)',
+          '+50.000 Cortes dos EUA (Ganhe em Dólar)',
+          '+20.000 Cursos Liberados',
+          'Concorre ao Sorteio do GTA 6',
+          'Calendário, Guia e Planilha'
+        ]
+      }
+    };
+
+    function selectPlan(planKey) {
+      if (!planData[planKey]) return;
+      currentPlan = planKey;
+
+      document.getElementById('planCardPro').classList.toggle('selected', planKey === 'pro');
+      document.getElementById('planCardBasic').classList.toggle('selected', planKey === 'basic');
+
+      const data = planData[planKey];
+      document.getElementById('summaryTitle').textContent = data.title;
+      document.getElementById('summaryDesc').textContent = data.desc;
+      document.getElementById('summaryOriginalPrice').textContent = data.originalPrice;
+      document.getElementById('summaryDiscount').textContent = data.discount;
+      document.getElementById('summaryTotalPrice').textContent = data.price;
+
+      const list = document.getElementById('summaryBonusesList');
+      list.innerHTML = data.bonuses.map(b => `<li>${b}</li>`).join('');
+    }
+
+    // Read URL params (e.g. ?plan=basic or ?plan=pro)
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const planParam = params.get('plan');
+      if (planParam && planData[planParam]) {
+        selectPlan(planParam);
+      }
+      startScarcityTimer();
+    });
+
+    // Form input masks
+    function maskCPF(i) {
+      let v = i.value.replace(/\D/g, "");
+      v = v.replace(/(\d{3})(\d)/, "$1.$2");
+      v = v.replace(/(\d{3})(\d)/, "$1.$2");
+      v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+      i.value = v;
+    }
+
+    function maskPhone(i) {
+      let v = i.value.replace(/\D/g, "");
+      v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+      v = v.replace(/(\d{5})(\d)/, "$1-$2");
+      i.value = v;
+    }
+
+    // Timer countdown
+    function startScarcityTimer() {
+      let duration = 600; // 10 mins
+      const display = document.getElementById('scarcityTimer');
+      setInterval(() => {
+        let m = Math.floor(duration / 60);
+        let s = duration % 60;
+        display.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        if (--duration < 0) duration = 600;
+      }, 1000);
+    }
+
+    // Modal & PIX submit
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const data = planData[currentPlan];
+      const pixPayload = `00020126580014BR.GOV.BCB.PIX0136gta6pack@monetize.com.br5204000053039865405${data.numericPrice}5802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2`;
+      
+      document.getElementById('pixPayloadText').textContent = pixPayload;
+      document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(pixPayload)}`;
+      
+      document.getElementById('pixModal').classList.add('active');
+      startPixTimer();
+    }
+
+    function closePixModal() {
+      document.getElementById('pixModal').classList.remove('active');
+    }
+
+    function copyPixCode() {
+      const code = document.getElementById('pixPayloadText').textContent.trim();
+      navigator.clipboard.writeText(code).then(() => {
+        const toast = document.getElementById('copyToast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      });
+    }
+
+    function startPixTimer() {
+      let t = 899; // 14:59
+      const disp = document.getElementById('pixModalTimer');
+      const interval = setInterval(() => {
+        let m = Math.floor(t / 60);
+        let s = t % 60;
+        if (disp) disp.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        if (--t < 0) clearInterval(interval);
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
