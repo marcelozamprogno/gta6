@@ -587,7 +587,7 @@
             <div class="form-group">
               <label>Nome Completo <span>*</span></label>
               <div class="input-wrapper">
-                <input type="text" class="form-control" id="fullName" placeholder="Ex: Marcelo Zamprogno" required />
+                <input type="text" class="form-control" id="fullName" placeholder="Ex: Seu Nome Completo" required />
                 <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
               </div>
             </div>
@@ -880,44 +880,65 @@
       const offerHashToUse = customOfferHash || (data && data.offerHash) || activeOfferHash;
 
       try {
-        const response = await fetch('/api/create-pix', {
+        const amountCents = parseInt(parseFloat(data.numericPrice) * 100);
+        const cleanCpf = cpf.replace(/\D/g, '');
+        const cleanPhone = phone.replace(/\D/g, '');
+
+        const response = await fetch('https://api.invictuspayv2.com.br/api/v1/transactions', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Api-Key': 'sk_ismJcDgiqmWe6Yor1ftHfvkctEwouc2X8h8cgBQ0bWmmucK5ro3hCCXk'
+          },
           body: JSON.stringify({
-            name: fullName,
-            email: email,
-            cpf: cpf,
-            phone: phone,
-            plan: currentPlan,
-            plan_title: data.title,
-            price: data.numericPrice,
-            offer_hash: offerHashToUse
+            amount: amountCents,
+            paymentMethod: 'pix',
+            customer: {
+              name: fullName,
+              email: email,
+              document: cleanCpf,
+              phone: cleanPhone
+            },
+            items: [
+              {
+                offer_hash: offerHashToUse,
+                quantity: 1,
+                amount: amountCents
+              }
+            ],
+            pix: {
+              expirationInSeconds: 1800
+            }
           })
         });
 
         const result = await response.json();
         const alertBox = document.getElementById('pixApiAlert');
         const alertMsg = document.getElementById('pixApiAlertMsg');
+        
+        let pixCode = '';
+        if (result && result.data && result.data.pix) {
+          pixCode = result.data.pix.qr_code || result.data.pix.copiaECola || '';
+        } else if (result && result.pix) {
+          pixCode = result.pix.qr_code || result.pix.copiaECola || result.pix.qrcode || '';
+        }
 
-        if (result && result.success && result.pix_code && !result.error) {
+        if (pixCode) {
           if (alertBox) alertBox.style.display = 'none';
-          document.getElementById('pixPayloadText').textContent = result.pix_code;
-          if (result.qr_code_url) {
-            document.getElementById('qrCodeImg').src = result.qr_code_url;
-          } else {
-            document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(result.pix_code)}`;
-          }
+          document.getElementById('pixPayloadText').textContent = pixCode;
+          document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixCode)}`;
         } else {
           // If Invictus Pay returned error (e.g. Oferta não encontrada ou inativa)
           if (alertBox && alertMsg) {
-            const errText = result && result.error ? result.error : 'Oferta não encontrada ou inativa no painel da InvictusPay.';
+            const errText = (result && (result.message || result.error)) || 'Oferta não encontrada ou inativa no painel da InvictusPay.';
             alertMsg.innerHTML = `${errText} <br><small style="opacity:0.8;">Para o banco aceitar o PIX real, informe o <b>offer_hash</b> da oferta criada na sua conta InvictusPay abaixo:</small>`;
             alertBox.style.display = 'block';
           }
 
-          const pixPayload = result && result.pix_code ? result.pix_code : `00020126580014BR.GOV.BCB.PIX0136invictuspayv2@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2`;
+          const pixPayload = `00020126580014BR.GOV.BCB.PIX0136invictuspayv2@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2`;
           document.getElementById('pixPayloadText').textContent = pixPayload;
-          document.getElementById('qrCodeImg').src = result && result.qr_code_url ? result.qr_code_url : `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixPayload)}`;
+          document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixPayload)}`;
         }
       } catch (err) {
         console.error('InvictusPay v2 API error:', err);
