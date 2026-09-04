@@ -708,6 +708,18 @@
       <h3 class="display" style="font-size:22px; font-weight:900; color:#fff;">PIX GERADO COM SUCESSO!</h3>
       <p style="font-size:13px; color:var(--muted); margin-top:4px;">Copie o código abaixo ou escaneie o QR Code com o aplicativo do seu banco:</p>
 
+      <div id="pixApiAlert" style="display:none; margin-top:12px; padding:12px; border-radius:12px; background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#fca5a5; font-size:12px; text-align:left;">
+        <b style="color:#fff; display:block; margin-bottom:4px;">⚠️ Mensagem da API InvictusPay:</b>
+        <span id="pixApiAlertMsg"></span>
+        <div style="margin-top:10px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.1);">
+          <label style="display:block; font-size:11px; font-weight:800; color:var(--gold); margin-bottom:4px;">Cole aqui o offer_hash da sua oferta na InvictusPay:</label>
+          <div style="display:flex; gap:6px;">
+            <input type="text" id="modalOfferHash" placeholder="Ex: off_12345678" style="flex:1; background:#070212; border:1px solid var(--line); color:#fff; padding:6px 10px; border-radius:8px; font-size:12px;" />
+            <button onclick="reSubmitWithOfferHash()" style="background:var(--pink); color:#fff; border:none; padding:6px 12px; border-radius:8px; font-weight:800; font-size:11px; cursor:pointer;">Gerar PIX</button>
+          </div>
+        </div>
+      </div>
+
       <div class="pix-qr-container">
         <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=00020126580014BR.GOV.BCB.PIX0136gta6pack@monetize.com.br520400005303986540529.905802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2" alt="QR Code PIX">
       </div>
@@ -846,9 +858,11 @@
       }, 1000);
     }
 
+    let activeOfferHash = 'off_gta6_pack';
+
     // Modal & PIX submit via InvictusPay v2 API
-    async function handleFormSubmit(e) {
-      e.preventDefault();
+    async function handleFormSubmit(e, customOfferHash) {
+      if (e) e.preventDefault();
       const btn = document.querySelector('.btn-submit');
       const originalText = btn.innerHTML;
       btn.disabled = true;
@@ -859,6 +873,8 @@
       const email = document.getElementById('email').value;
       const cpf = document.getElementById('cpf').value;
       const phone = document.getElementById('phone').value;
+
+      const offerHashToUse = customOfferHash || activeOfferHash;
 
       try {
         const response = await fetch('/api/create-pix', {
@@ -873,12 +889,16 @@
             plan_title: data.title,
             price: data.numericPrice,
             x_api_key: '29032003m',
-            offer_hash: 'off_gta6_pack'
+            offer_hash: offerHashToUse
           })
         });
 
         const result = await response.json();
-        if (result && result.pix_code) {
+        const alertBox = document.getElementById('pixApiAlert');
+        const alertMsg = document.getElementById('pixApiAlertMsg');
+
+        if (result && result.success && result.pix_code && !result.error) {
+          if (alertBox) alertBox.style.display = 'none';
           document.getElementById('pixPayloadText').textContent = result.pix_code;
           if (result.qr_code_url) {
             document.getElementById('qrCodeImg').src = result.qr_code_url;
@@ -886,9 +906,16 @@
             document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(result.pix_code)}`;
           }
         } else {
-          const pixPayload = `00020126580014BR.GOV.BCB.PIX0136invictuspayv2@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2`;
+          // If Invictus Pay returned error (e.g. Oferta não encontrada ou inativa)
+          if (alertBox && alertMsg) {
+            const errText = result && result.error ? result.error : 'Oferta não encontrada ou inativa no painel da InvictusPay.';
+            alertMsg.innerHTML = `${errText} <br><small style="opacity:0.8;">Para o banco aceitar o PIX real, informe o <b>offer_hash</b> da oferta criada na sua conta InvictusPay abaixo:</small>`;
+            alertBox.style.display = 'block';
+          }
+
+          const pixPayload = result && result.pix_code ? result.pix_code : `00020126580014BR.GOV.BCB.PIX0136invictuspayv2@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2`;
           document.getElementById('pixPayloadText').textContent = pixPayload;
-          document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixPayload)}`;
+          document.getElementById('qrCodeImg').src = result && result.qr_code_url ? result.qr_code_url : `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixPayload)}`;
         }
       } catch (err) {
         console.error('InvictusPay v2 API error:', err);
@@ -901,6 +928,13 @@
         document.getElementById('pixModal').classList.add('active');
         startPixTimer();
       }
+    }
+
+    function reSubmitWithOfferHash() {
+      const val = document.getElementById('modalOfferHash').value.trim();
+      if (!val) { alert('Digite o offer_hash da sua oferta InvictusPay.'); return; }
+      activeOfferHash = val;
+      handleFormSubmit(null, val);
     }
 
     function closePixModal() {
