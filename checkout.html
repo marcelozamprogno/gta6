@@ -756,6 +756,7 @@
 
     const planData = {
       pro: {
+        offerHash: 'off_pro', // Cole o offer_hash da oferta PRO criada na InvictusPay aqui
         title: 'Pack +2000 Vídeos GTA 6 PRO',
         desc: 'Biblioteca Completa em Full HD',
         originalPrice: 'R$ 197,00',
@@ -772,6 +773,7 @@
         ]
       },
       basic: {
+        offerHash: 'off_basic', // Cole o offer_hash da oferta Básico criada na InvictusPay aqui
         title: 'Pack +650 Vídeos GTA 6 Básico',
         desc: 'Acervo Inicial + Cortes Brasil',
         originalPrice: 'R$ 97,00',
@@ -786,6 +788,7 @@
         ]
       },
       downsell: {
+        offerHash: 'off_downsell', // Cole o offer_hash da oferta Downsell criada na InvictusPay aqui
         title: 'Pack +2000 Vídeos GTA 6 PRO (Oferta Especial)',
         desc: 'Desconto Exclusivo PRO',
         originalPrice: 'R$ 197,00',
@@ -874,7 +877,7 @@
       const cpf = document.getElementById('cpf').value;
       const phone = document.getElementById('phone').value;
 
-      const offerHashToUse = customOfferHash || activeOfferHash;
+      const offerHashToUse = customOfferHash || (data && data.offerHash) || activeOfferHash;
 
       try {
         const response = await fetch('/api/create-pix', {
