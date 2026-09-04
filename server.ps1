@@ -4,6 +4,7 @@ param(
 
 $INVICTUS_X_API_KEY = "sk_ismJcDgiqmWe6Yor1ftHfvkctEwouc2X8h8cgBQ0bWmmucK5ro3hCCXk"
 $INVICTUS_V2_ENDPOINT = "https://api.invictuspayv2.com.br/api/v1/transactions"
+$DEFAULT_OFFER_HASH = "off_01m1n4txnfxqj31zwsnvgksz6j"
 
 $listener = New-Object System.Net.HttpListener
 $prefix = "http://localhost:$Port/"
@@ -65,7 +66,7 @@ while ($listener.IsListening) {
             $cleanCpf = ($data.cpf -replace '\D', '')
             $cleanPhone = ($data.phone -replace '\D', '')
             $amountCents = [int]([decimal]$data.price * 100)
-            $offerHash = if ($data.offer_hash) { $data.offer_hash } else { "off_exemplo" }
+            $offerHash = if ($data.offer_hash -and $data.offer_hash -ne "off_gta6_pack" -and $data.offer_hash -ne "off_exemplo") { $data.offer_hash } else { $DEFAULT_OFFER_HASH }
 
             $invictusPayload = @{
                 amount = $amountCents
@@ -93,6 +94,7 @@ while ($listener.IsListening) {
             $pixCode = ""
             $qrCodeUrl = ""
             $errorMessage = ""
+            $transactionId = ""
 
             try {
                 $invRes = Invoke-WebRequest -Uri $INVICTUS_V2_ENDPOINT -Method Post -Headers @{
@@ -102,18 +104,20 @@ while ($listener.IsListening) {
                 } -Body $invictusPayload -UseBasicParsing -TimeoutSec 8
 
                 $invictusResult = ConvertFrom-Json $invRes.Content
-                
-                if ($invictusResult.pix) {
-                    if ($invictusResult.pix.copiaECola) { $pixCode = $invictusResult.pix.copiaECola }
-                    elseif ($invictusResult.pix.qrcode) { $pixCode = $invictusResult.pix.qrcode }
-                    elseif ($invictusResult.pix.payload) { $pixCode = $invictusResult.pix.payload }
 
-                    if ($invictusResult.pix.qrCodeUrl) { $qrCodeUrl = $invictusResult.pix.qrCodeUrl }
-                    elseif ($invictusResult.pix.qrcodeUrl) { $qrCodeUrl = $invictusResult.pix.qrcodeUrl }
+                if ($invictusResult.data) {
+                    if ($invictusResult.data.id) { $transactionId = $invictusResult.data.id }
+                    if ($invictusResult.data.pix) {
+                        if ($invictusResult.data.pix.qr_code) { $pixCode = $invictusResult.data.pix.qr_code }
+                        elseif ($invictusResult.data.pix.copiaECola) { $pixCode = $invictusResult.data.pix.copiaECola }
+                    }
                 }
 
-                if (-not $pixCode -and $invictusResult.pix_code) { $pixCode = $invictusResult.pix_code }
-                if (-not $pixCode -and $invictusResult.qrcode) { $pixCode = $invictusResult.qrcode }
+                if (-not $pixCode -and $invictusResult.pix) {
+                    if ($invictusResult.pix.qr_code) { $pixCode = $invictusResult.pix.qr_code }
+                    elseif ($invictusResult.pix.copiaECola) { $pixCode = $invictusResult.pix.copiaECola }
+                    elseif ($invictusResult.pix.qrcode) { $pixCode = $invictusResult.pix.qrcode }
+                }
 
                 if ($pixCode) {
                     $success = $true
@@ -144,6 +148,7 @@ while ($listener.IsListening) {
                 x_api_key_used = $apiKeyToUse
                 endpoint = $INVICTUS_V2_ENDPOINT
                 offer_hash_used = $offerHash
+                transaction_id = $transactionId
                 pix_code = $pixCode
                 qr_code_url = $qrCodeUrl
                 error = $errorMessage
