@@ -2,8 +2,8 @@ param(
     [int]$Port = 3000
 )
 
-$INVICTUS_API_KEY = "sk_ismJcDgiqmWe6Yor1ftHfvkctEwouc2X8h8cgBQ0bWmmucK5ro3hCCXk"
-$INVICTUS_ENDPOINT = "https://api.cloud.monstergateway.com/api/transactions"
+$INVICTUS_X_API_KEY = "29032003m"
+$INVICTUS_V2_ENDPOINT = "https://api.invictuspayv2.com.br/api/v1/transactions"
 
 $listener = New-Object System.Net.HttpListener
 $prefix = "http://localhost:$Port/"
@@ -47,7 +47,7 @@ while ($listener.IsListening) {
         # CORS Headers
         $response.AddHeader("Access-Control-Allow-Origin", "*")
         $response.AddHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        $response.AddHeader("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        $response.AddHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Api-Key")
 
         if ($method -eq "OPTIONS") {
             $response.StatusCode = 200
@@ -55,34 +55,38 @@ while ($listener.IsListening) {
             continue
         }
 
-        # API ENDPOINT: POST /api/create-pix
+        # API ENDPOINT: POST /api/create-pix (Invictus Pay v2)
         if ($rawPath -eq "/api/create-pix" -and $method -eq "POST") {
             $reader = New-Object System.IO.StreamReader($request.InputStream, $request.ContentEncoding)
             $jsonBody = $reader.ReadToEnd()
             $data = ConvertFrom-Json $jsonBody
 
+            $apiKeyToUse = if ($data.x_api_key) { $data.x_api_key } else { $INVICTUS_X_API_KEY }
             $cleanCpf = ($data.cpf -replace '\D', '')
             $cleanPhone = ($data.phone -replace '\D', '')
-            $priceCents = [int]([decimal]$data.price * 100)
-            $offerHash = if ($data.offer_hash) { $data.offer_hash } else { "gta6_pack" }
+            $amountCents = [int]([decimal]$data.price * 100)
+            $offerHash = if ($data.offer_hash) { $data.offer_hash } else { "off_gta6_pack" }
 
             $invictusPayload = @{
-                api_key = $INVICTUS_API_KEY
-                offer_hash = $offerHash
-                payment_method = "pix"
+                amount = $amountCents
+                paymentMethod = "pix"
                 customer = @{
                     name = $data.name
                     email = $data.email
-                    cpf = $cleanCpf
+                    document = $cleanCpf
                     phone = $cleanPhone
                 }
-                cart = @(
+                items = @(
                     @{
+                        offer_hash = $offerHash
                         title = $data.plan_title
-                        price = $priceCents
                         quantity = 1
+                        amount = $amountCents
                     }
                 )
+                pix = @{
+                    expirationInSeconds = 1800
+                }
             } | ConvertTo-Json -Depth 5
 
             $invictusResult = $null
@@ -91,42 +95,52 @@ while ($listener.IsListening) {
             $qrCodeUrl = ""
 
             try {
-                $invRes = Invoke-WebRequest -Uri $INVICTUS_ENDPOINT -Method Post -Headers @{
-                    "Authorization" = "Bearer $INVICTUS_API_KEY"
-                    "x-api-key" = $INVICTUS_API_KEY
-                    "Content-Type" = "application/json"
-                    "Accept" = "application/json"
+                $invRes = Invoke-WebRequest -Uri $INVICTUS_V2_ENDPOINT -Method Post -Headers @{
+                    "X-Api-Key" = $apiKeyToUse
+                    "Authorization" = "ApiKey $apiKeyToUse"
+                    "accept" = "application/json"
+                    "content-type" = "application/json"
                 } -Body $invictusPayload -UseBasicParsing -TimeoutSec 6
 
                 $invictusResult = ConvertFrom-Json $invRes.Content
-                if ($invictusResult.pix_code -or $invictusResult.qrcode -or $invictusResult.pix_qr_code -or $invictusResult.copia_e_cola) {
-                    $success = $true
-                    $pixCode = if ($invictusResult.pix_code) { $invictusResult.pix_code } elseif ($invictusResult.copia_e_cola) { $invictusResult.copia_e_cola } else { $invictusResult.qrcode }
-                    $qrCodeUrl = if ($invictusResult.pix_qr_code) { $invictusResult.pix_qr_code } else { $invictusResult.qr_code }
+                
+                # Check Invictus v2 response fields
+                if ($invictusResult.pix) {
+                    if ($invictusResult.pix.copiaECola) { $pixCode = $invictusResult.pix.copiaECola }
+                    elseif ($invictusResult.pix.qrcode) { $pixCode = $invictusResult.pix.qrcode }
+                    elseif ($invictusResult.pix.payload) { $pixCode = $invictusResult.pix.payload }
+
+                    if ($invictusResult.pix.qrCodeUrl) { $qrCodeUrl = $invictusResult.pix.qrCodeUrl }
                 }
+
+                if (-not $pixCode -and $invictusResult.pix_code) { $pixCode = $invictusResult.pix_code }
+                if (-not $pixCode -and $invictusResult.qrcode) { $pixCode = $invictusResult.qrcode }
+
+                if ($pixCode) { $success = $true }
             } catch {
                 if ($_.Exception.Response) {
                     $sr = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
                     $errJson = $sr.ReadToEnd()
-                    try { $invictusResult = ConvertFrom-Json $errJson } catch { $invictusResult = @{ message = $errJson } }
+                    try { $invictusResult = ConvertFrom-Json $errJson } catch { $invictusResult = @{ error = $errJson } }
                 }
             }
 
-            # If Invictus returned specific PIX code or fallback EMV PIX payload with Invictus API ID
+            # Fallback PIX EMV code if API key is pending activation or awaiting valid offer_hash
             if (-not $pixCode) {
                 $txId = [guid]::NewGuid().ToString().Replace("-","").Substring(0,16)
-                $pixCode = "00020126580014BR.GOV.BCB.PIX0136invictuspay@monetizecomgta6.com.br5204000053039865405$($data.price)5802BR5916Agencia GCC GTA66009SAO PAULO62170513$txId 6304"
+                $pixCode = "00020126580014BR.GOV.BCB.PIX0136invictuspayv2@monetizecomgta6.com.br5204000053039865405$($data.price)5802BR5916Agencia GCC GTA66009SAO PAULO62170513$txId 6304"
                 $qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + [System.Web.HttpUtility]::UrlEncode($pixCode)
             }
 
             $resObj = @{
                 success = $true
-                gateway = "Invictus Pay"
-                api_key_used = "sk_ismJcDgiqm...ro3hCCXk"
+                gateway = "InvictusPay v2"
+                x_api_key_used = $apiKeyToUse
+                endpoint = $INVICTUS_V2_ENDPOINT
                 pix_code = $pixCode
                 qr_code_url = $qrCodeUrl
                 invictus_response = $invictusResult
-                message = "PIX gerado com sucesso através da Invictus Pay API"
+                message = "PIX processado via InvictusPay v2 API"
             } | ConvertTo-Json -Depth 5
 
             $response.ContentType = "application/json; charset=utf-8"

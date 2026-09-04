@@ -846,13 +846,13 @@
       }, 1000);
     }
 
-    // Modal & PIX submit via Invictus Pay API
+    // Modal & PIX submit via InvictusPay v2 API
     async function handleFormSubmit(e) {
       e.preventDefault();
       const btn = document.querySelector('.btn-submit');
       const originalText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '⚡ GERANDO PIX COM INVICTUS PAY...';
+      btn.innerHTML = '⚡ GERANDO PIX COM INVICTUSPAY V2...';
 
       const data = planData[currentPlan];
       const fullName = document.getElementById('fullName').value;
@@ -872,7 +872,8 @@
             plan: currentPlan,
             plan_title: data.title,
             price: data.numericPrice,
-            api_key: 'sk_ismJcDgiqmWe6Yor1ftHfvkctEwouc2X8h8cgBQ0bWmmucK5ro3hCCXk'
+            x_api_key: '29032003m',
+            offer_hash: 'off_gta6_pack'
           })
         });
 
@@ -885,13 +886,13 @@
             document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(result.pix_code)}`;
           }
         } else {
-          const pixPayload = `00020126580014BR.GOV.BCB.PIX0136invictuspay@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2`;
+          const pixPayload = `00020126580014BR.GOV.BCB.PIX0136invictuspayv2@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2`;
           document.getElementById('pixPayloadText').textContent = pixPayload;
           document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixPayload)}`;
         }
       } catch (err) {
-        console.error('Invictus Pay API fetch error:', err);
-        const pixPayload = `00020126580014BR.GOV.BCB.PIX0136invictuspay@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2`;
+        console.error('InvictusPay v2 API error:', err);
+        const pixPayload = `00020126580014BR.GOV.BCB.PIX0136invictuspayv2@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2`;
         document.getElementById('pixPayloadText').textContent = pixPayload;
         document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixPayload)}`;
       } finally {
