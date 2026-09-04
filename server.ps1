@@ -62,7 +62,7 @@ while ($listener.IsListening) {
             $jsonBody = $reader.ReadToEnd()
             $data = ConvertFrom-Json $jsonBody
 
-            $apiKeyToUse = if ($data.x_api_key) { $data.x_api_key } else { $INVICTUS_X_API_KEY }
+            $apiKeyToUse = $INVICTUS_X_API_KEY
             $cleanCpf = ($data.cpf -replace '\D', '')
             $cleanPhone = ($data.phone -replace '\D', '')
             $amountCents = [int]([decimal]$data.price * 100)
