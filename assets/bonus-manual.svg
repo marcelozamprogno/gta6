@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 900" width="720" height="900" font-family="'Outfit','Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a0733"/>
+      <stop offset="0.55" stop-color="#0d0420"/>
+      <stop offset="1" stop-color="#08010f"/>
+    </linearGradient>
+    <linearGradient id="pinkcy" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#21d4fd"/>
+      <stop offset="0.5" stop-color="#ff2e88"/>
+      <stop offset="1" stop-color="#ffb347"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.32" r="0.6">
+      <stop offset="0" stop-color="#7b2ff7" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#7b2ff7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="720" height="900" fill="url(#bg)"/>
+  <rect width="720" height="900" fill="url(#glow)"/>
+  <!-- grid lines -->
+  <g stroke="#ff2e88" stroke-opacity="0.07" stroke-width="1">
+    <line x1="0" y1="230" x2="720" y2="230"/>
+    <line x1="0" y1="470" x2="720" y2="470"/>
+    <line x1="0" y1="700" x2="720" y2="700"/>
+  </g>
+  <!-- badge -->
+  <rect x="260" y="96" width="200" height="46" rx="23" fill="#ffd84d"/>
+  <text x="360" y="126" text-anchor="middle" font-size="20" font-weight="900" fill="#180016" letter-spacing="2">BÔNUS EXTRA</text>
+  <!-- book / rocket icon -->
+  <g transform="translate(360 300)">
+    <circle r="94" fill="#160a2c" stroke="#ff2e88" stroke-width="3"/>
+    <text x="0" y="34" text-anchor="middle" font-size="96">🚀</text>
+  </g>
+  <!-- title -->
+  <text x="360" y="500" text-anchor="middle" font-size="58" font-weight="900" fill="#ffffff" letter-spacing="1">MANUAL</text>
+  <text x="360" y="566" text-anchor="middle" font-size="40" font-weight="900" fill="url(#pinkcy)">CANAL DE GTA 6</text>
+  <text x="360" y="620" text-anchor="middle" font-size="40" font-weight="900" fill="url(#pinkcy)">DO ZERO</text>
+  <!-- subtitle -->
+  <text x="360" y="686" text-anchor="middle" font-size="23" font-weight="600" fill="#b9a9d6">Do primeiro post à monetização</text>
+  <!-- steps chips -->
+  <g font-size="20" font-weight="700" fill="#ffffff">
+    <rect x="118" y="740" width="220" height="52" rx="26" fill="#150827" stroke="#2a1246"/>
+    <text x="228" y="774" text-anchor="middle">✓ Criar o canal</text>
+    <rect x="382" y="740" width="220" height="52" rx="26" fill="#150827" stroke="#2a1246"/>
+    <text x="492" y="774" text-anchor="middle">✓ Postar certo</text>
+    <rect x="210" y="808" width="300" height="52" rx="26" fill="#150827" stroke="#2a1246"/>
+    <text x="360" y="842" text-anchor="middle">✓ Bater a monetização</text>
+  </g>
+</svg>

@@ -1,0 +1,4 @@
+# Logs & temp files
+*.log
+.system_generated/
+scratch/
