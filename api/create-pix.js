@@ -15,8 +15,12 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const data = req.body;
-    const amountCents = parseInt(parseFloat(data.price) * 100);
+    let data = req.body;
+    if (typeof data === 'string') {
+      try { data = JSON.parse(data); } catch(e) {}
+    }
+    
+    const amountCents = parseInt(parseFloat(data.price || '29.90') * 100);
     const cleanCpf = (data.cpf || '').replace(/\D/g, '');
     const cleanPhone = (data.phone || '').replace(/\D/g, '');
 
