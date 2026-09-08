@@ -628,7 +628,7 @@
             Dados do Comprador
           </div>
 
-          <form id="checkoutForm" onsubmit="handleFormSubmit(event)">
+          <form id="checkoutForm" onsubmit="event.preventDefault(); handleFormSubmit(event);">
             <div class="form-group">
               <label>Nome Completo <span>*</span></label>
               <div class="input-wrapper">
