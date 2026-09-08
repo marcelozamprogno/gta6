@@ -71,7 +71,8 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ 
         success: false, 
         error: result.error || result.message || 'Erro na Invictus',
-        raw: result
+        raw: result,
+        debugPayload: payload
       });
     }
   } catch (err) {
