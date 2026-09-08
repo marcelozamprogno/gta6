@@ -988,8 +988,8 @@
 
         // Pixel: Lead ao gerar PIX (botão GERAR QR CODE PIX)
         var leadData = planData[currentPlan];
-        var email = document.getElementById('email').value;
-        var phone = document.getElementById('phone').value.replace(/\D/g, '');
+        var leadEmail = document.getElementById('email').value;
+        var leadPhone = document.getElementById('phone').value.replace(/\D/g, '');
         sendCAPI('Lead', {
           value: parseFloat(leadData.numericPrice),
           currency: 'BRL',
@@ -997,8 +997,8 @@
           content_type: 'product',
           content_ids: [currentPlan === 'pro' ? 'pack_pro_2000' : 'pack_basico_650']
         }, {
-          em: email ? [email] : [],
-          ph: phone ? [phone] : []
+          em: leadEmail ? [leadEmail] : [],
+          ph: leadPhone ? [leadPhone] : []
         });
 
         // Simular verificação de pagamento e disparar Purchase quando aprovado
