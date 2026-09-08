@@ -20,7 +20,7 @@ module.exports = async function handler(req, res) {
       try { data = JSON.parse(data); } catch(e) {}
     }
     
-    const amountCents = parseInt(parseFloat(data.price || '29.90') * 100);
+    const amountCents = Math.round(parseFloat(data.price || '29.90') * 100);
     const cleanCpf = (data.cpf || '').replace(/\D/g, '');
     const cleanPhone = (data.phone || '').replace(/\D/g, '');
 
