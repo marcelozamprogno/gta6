@@ -2,7 +2,7 @@ param(
     [int]$Port = 3000
 )
 
-$INVICTUS_X_API_KEY = "sk_ismJcDgiqmWe6Yor1ftHfvkctEwouc2X8h8cgBQ0bWmmucK5ro3hCCXk"
+$INVICTUS_X_API_KEY = "sk_DObI6KFYde8jqeLX6GMOXkhQkZZu0PAdCUMlJ6dP3lkwDRpO1CDDcSHo"
 $INVICTUS_V2_ENDPOINT = "https://api.invictuspayv2.com.br/api/v1/transactions"
 $DEFAULT_OFFER_HASH = "off_01m1n4txnfxqj31zwsnvgksz6j"
 
@@ -68,26 +68,16 @@ while ($listener.IsListening) {
             $amountCents = [int]([decimal]$data.price * 100)
             $offerHash = if ($data.offer_hash -and $data.offer_hash -ne "off_gta6_pack" -and $data.offer_hash -ne "off_exemplo") { $data.offer_hash } else { $DEFAULT_OFFER_HASH }
 
-            $invictusPayload = @{
-                amount = $amountCents
-                paymentMethod = "pix"
-                customer = @{
-                    name = $data.name
-                    email = $data.email
-                    document = $cleanCpf
-                    phone = $cleanPhone
-                }
-                items = @(
-                    @{
-                        offer_hash = $offerHash
-                        quantity = 1
-                        amount = $amountCents
-                    }
-                )
-                pix = @{
-                    expirationInSeconds = 1800
-                }
-            } | ConvertTo-Json -Depth 5
+            # Build JSON as raw string to avoid PowerShell ConvertTo-Json issues
+            # (ConvertTo-Json converts single-item arrays to objects, breaking the API)
+            $customerName = if ($data.name) { $data.name } else { "Cliente" }
+            $customerEmail = if ($data.email) { $data.email } else { "cliente@email.com" }
+            $customerDoc = if ($cleanCpf) { $cleanCpf } else { "00000000000" }
+            $customerPhone = if ($cleanPhone) { $cleanPhone } else { "" }
+
+            $invictusPayload = @"
+{"amount":$amountCents,"paymentMethod":"pix","customer":{"name":"$customerName","email":"$customerEmail","document":"$customerDoc","phone":"$customerPhone"},"items":[{"offer_hash":"$offerHash","quantity":1,"amount":$amountCents}],"pix":{"expirationInSeconds":1800}}
+"@
 
             $invictusResult = $null
             $success = $false
@@ -97,11 +87,12 @@ while ($listener.IsListening) {
             $transactionId = ""
 
             try {
+                $bodyBytes = [System.Text.Encoding]::UTF8.GetBytes($invictusPayload)
                 $invRes = Invoke-WebRequest -Uri $INVICTUS_V2_ENDPOINT -Method Post -Headers @{
                     "X-Api-Key" = $apiKeyToUse
                     "accept" = "application/json"
                     "content-type" = "application/json"
-                } -Body $invictusPayload -UseBasicParsing -TimeoutSec 8
+                } -Body $bodyBytes -UseBasicParsing -TimeoutSec 15
 
                 $invictusResult = ConvertFrom-Json $invRes.Content
 

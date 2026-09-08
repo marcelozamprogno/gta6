@@ -20,12 +20,43 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1421092889857685'); // pixel principal
-fbq('init', '1859633381423926');
+fbq('init', '28327168003592598');
 fbq('track', 'PageView');
+
+/* === Facebook Conversions API (CAPI) === */
+var FB_CAPI_TOKEN = 'EAAPmwKtLZBdQBSUOFekZAITWYcwTZBv8GVxPztJrgYCVtBxAYi4tqZAi8LRneBpimIlaxgQxZALyR8aSb9ZB2gARTidFqZCzDoFI20fIeTJ2Oc7JehUZA67adCE8ZBzl0ZCb8sZBZBnFjLZAiYMcXvJcLL1gtXhus932tf3pRkZAQG1JdTrft0K3g4ZAh5AWfkcPV0LjgZDZD';
+var FB_PIXEL_ID  = '28327168003592598';
+function sendCAPI(eventName, customData, userData) {
+  var eventID = eventName + '_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
+  // Dispara browser pixel com event_id para deduplicação
+  if(typeof fbq==='function') fbq('track', eventName, customData, {eventID: eventID});
+  // Envia server-side via Conversions API
+  var payload = {
+    data: [{
+      event_name: eventName,
+      event_time: Math.floor(Date.now()/1000),
+      event_id: eventID,
+      event_source_url: window.location.href,
+      action_source: 'website',
+      user_data: Object.assign({
+        client_user_agent: navigator.userAgent,
+        fbp: (document.cookie.match(/_fbp=([^;]+)/)||[])[1]||'',
+        fbc: (document.cookie.match(/_fbc=([^;]+)/)||[])[1]||''
+      }, userData||{}),
+      custom_data: customData||{}
+    }]
+  };
+  fetch('https://graph.facebook.com/v21.0/'+FB_PIXEL_ID+'/events?access_token='+FB_CAPI_TOKEN,{
+    method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),keepalive:true
+  }).catch(function(){});
+  return eventID;
+}
 </script>
 <noscript><img height="1" width="1" style="display:none"
 src="https://www.facebook.com/tr?id=1859633381423926&ev=PageView&noscript=1"
+/></noscript>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1051805194224329&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -277,31 +308,14 @@ src="https://www.facebook.com/tr?id=1859633381423926&ev=PageView&noscript=1"
   .route-stat{display:inline-block;margin-top:26px;background:rgba(255,216,77,.12);border:1px solid rgba(255,216,77,.4);color:var(--gold);font-weight:700;font-size:15px;padding:12px 22px;border-radius:100px}
   .route-stat b{color:#fff}
   @media(max-width:640px){ .rarrow{transform:rotate(90deg)} }
-  /* notificação WhatsApp simulada */
-  .wanotif{position:fixed;top:12px;left:50%;transform:translateX(-50%) translateY(-160%);z-index:1400;width:min(380px,calc(100vw - 24px));background:#fff;border-radius:16px;box-shadow:0 14px 44px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.3);padding:11px 13px;display:flex;align-items:center;gap:11px;cursor:pointer;text-decoration:none;opacity:0;transition:transform .5s cubic-bezier(.22,1.2,.36,1),opacity .4s}
-  .wanotif.show{transform:translateX(-50%) translateY(0);opacity:1}
-  .wanotif .wa-ic{position:absolute;top:9px;left:11px;width:16px;height:16px;border-radius:4px;background:#25d366;display:grid;place-items:center}
-  .wanotif .wa-ic svg{width:11px;height:11px;fill:#fff}
-  .wanotif .wa-av{flex:none;width:46px;height:46px;border-radius:50%;object-fit:cover;background:#10021f}
-  .wanotif .wa-body{flex:1;min-width:0}
-  .wanotif .wa-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px}
-  .wanotif .wa-name{font-family:system-ui,'Segoe UI',sans-serif;font-weight:700;font-size:14px;color:#111b21;line-height:1.2;display:flex;align-items:center;gap:4px}
-  .wanotif .wa-name .wa-check{width:14px;height:14px;fill:#25d366;flex:none}
-  .wanotif .wa-time{font-family:system-ui,sans-serif;font-size:11px;color:#667781;flex:none}
-  .wanotif .wa-msg{font-family:system-ui,sans-serif;font-size:13px;color:#3b4a54;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .wanotif .wa-msg b{color:#111b21}
-  @media(min-width:1000px){.wanotif{left:auto;right:18px;transform:translateY(-160%)}.wanotif.show{transform:translateY(0)}}
   /* botões flutuantes */
   .social-float{position:fixed;right:16px;bottom:20px;z-index:60;display:flex;flex-direction:column;gap:12px}
   .social-float a{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;box-shadow:0 8px 22px rgba(0,0,0,.45);transition:transform .18s;position:relative}
   .social-float a:hover{transform:scale(1.1)}
   .social-float a svg{width:28px;height:28px}
-  .social-float a.wa{background:linear-gradient(135deg,#25d366,#128c4b)}
   .social-float a.ig{background:linear-gradient(135deg,#feda75,#fa7e1e 30%,#d62976 60%,#962fbf 80%,#4f5bd5)}
   .social-float a .tip{position:absolute;right:64px;top:50%;transform:translateY(-50%);background:#15032a;color:#fff;font-size:12px;font-weight:700;white-space:nowrap;padding:6px 12px;border-radius:8px;border:1px solid var(--line);opacity:0;pointer-events:none;transition:.18s}
   .social-float a:hover .tip{opacity:1}
-  .wa-pulse{position:absolute;inset:0;border-radius:50%;border:2px solid #25d366;animation:waPulse 1.8s ease-out infinite}
-  @keyframes waPulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.7);opacity:0}}
   /* card agência GCC */
   .gcc-card{display:flex;gap:24px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:720px;margin:26px auto 0;background:linear-gradient(135deg,rgba(123,47,247,.12),rgba(33,212,253,.06));border:1px solid var(--line);border-radius:24px;padding:28px;text-align:left}
   .gcc-card .avwrap{position:relative;flex:none}
@@ -758,7 +772,7 @@ src="https://www.facebook.com/tr?id=1859633381423926&ev=PageView&noscript=1"
           <li class="no"><span class="xk">✕</span><span>+20.000 cursos liberados</span></li>
           <li class="no"><span class="xk">✕</span><span>Conteúdo pra postar depois do lançamento</span></li>
         </ul>
-        <a class="cta" style="width:100%" id="btnBasic" href="/checkout?plan=basic" data-checkout="/checkout?plan=basic">QUERO O PLANO BÁSICO</a>
+        <a class="cta" style="width:100%" id="btnBasic" href="/checkout?plan=basic" data-checkout="/checkout?plan=basic" onclick="sendCAPI('AddToCart',{value:9.90,currency:'BRL',content_name:'Pack Basico GTA 6',content_type:'product',content_ids:['pack_basico_650']})">QUERO O PLANO BÁSICO</a>
       </div>
 
       <!-- PLANO PRO -->
@@ -807,7 +821,7 @@ src="https://www.facebook.com/tr?id=1859633381423926&ev=PageView&noscript=1"
             <div class="cart-it"><img src="/assets/bonus-manual.svg" loading="lazy" alt="Manual"><span class="ck2">✓</span><span class="cap">Manual do Zero</span></div>
           </div>
         </div>
-        <a class="cta" style="width:100%" id="btnPro" href="/checkout?plan=pro">QUERO O PLANO PRO 👑</a>
+        <a class="cta" style="width:100%" id="btnPro" href="/checkout?plan=pro" onclick="sendCAPI('AddToCart',{value:29.90,currency:'BRL',content_name:'Pack PRO GTA 6',content_type:'product',content_ids:['pack_pro_2000']})">QUERO O PLANO PRO 👑</a>
       </div>
     </div>
     <div class="guarantee" style="margin-top:20px">🔒 Compra 100% segura • Acesso imediato • Garantia de 7 dias</div>
@@ -866,25 +880,8 @@ src="https://www.facebook.com/tr?id=1859633381423926&ev=PageView&noscript=1"
   </div>
 </footer>
 
-<!-- notificação simulada WhatsApp -->
-<a class="wanotif" id="waNotif" href="https://wa.me/5551980350623?text=Quero%20saber%20mais%20sobre%20o%20Pack%20de%20V%C3%ADdeos%20do%20GTA%206" target="_blank" rel="noopener" aria-label="Mensagem no WhatsApp">
-  <span class="wa-ic"><svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.6c1.7.9 3.7 1.4 5.8 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3z"/></svg></span>
-  <img class="wa-av" src="/assets/gcc.jpg" alt="Agência GCC">
-  <div class="wa-body">
-    <div class="wa-top">
-      <span class="wa-name">Agência GCC <svg class="wa-check" viewBox="0 0 24 24"><path d="M12 2l2.4 1.8 3 .1 1 2.8 2.4 1.7-.9 2.9.9 2.9-2.4 1.7-1 2.8-3 .1L12 22l-2.4-1.8-3-.1-1-2.8L3.2 15.6l.9-2.9-.9-2.9 2.4-1.7 1-2.8 3-.1z"/><path d="M20 7.5 9.5 18 4.5 13" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-      <span class="wa-time" id="waTime">agora</span>
-    </div>
-    <div class="wa-msg">Tudo <b>100% pronto</b> pra você monetizar com o GTA 6 🚀 Bora garantir sua vaga?</div>
-  </div>
-</a>
-
-<!-- botões flutuantes -->
+<!-- botão flutuante Instagram -->
 <div class="social-float">
-  <a class="wa" href="https://wa.me/5551980350623?text=Quero%20saber%20mais%20sobre%20o%20Pack%20de%20V%C3%ADdeos%20do%20GTA%206" target="_blank" rel="noopener" aria-label="WhatsApp">
-    <span class="wa-pulse"></span><span class="tip">Fala comigo no WhatsApp</span>
-    <svg viewBox="0 0 32 32" fill="#fff"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.6c1.7.9 3.7 1.4 5.8 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.8 0-3.6-.5-5.1-1.4l-.4-.2-4.3.9.9-4.2-.2-.4c-1-1.6-1.5-3.4-1.5-5.3 0-5.5 4.5-9.9 10-9.9s9.9 4.4 9.9 9.9-4.4 9.9-9.9 9.9zm5.4-7.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.3z"/></svg>
-  </a>
   <a class="ig" href="https://instagram.com/agenciagccoficial" target="_blank" rel="noopener" aria-label="Instagram">
     <span class="tip">Nosso Instagram</span>
     <svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.2" stroke="#fff" stroke-width="2"/><circle cx="17.6" cy="6.4" r="1.4" fill="#fff"/></svg>
@@ -946,49 +943,7 @@ document.getElementById('yr').textContent=new Date().getFullYear();
   });
 })();
 
-/* ===== notificação simulada do WhatsApp (com som) ===== */
-(function(){
-  const el=document.getElementById('waNotif');
-  if(!el)return;
-  if(sessionStorage.getItem('g6pack_wa_notif')==='1')return;
-  let actx=null, unlocked=false;
-  function unlock(){
-    if(unlocked)return;unlocked=true;
-    try{const C=window.AudioContext||window.webkitAudioContext;actx=new C();if(actx.state==='suspended')actx.resume();}catch(e){}
-    window.removeEventListener('pointerdown',unlock);window.removeEventListener('keydown',unlock);window.removeEventListener('touchstart',unlock);window.removeEventListener('scroll',unlock);
-  }
-  window.addEventListener('pointerdown',unlock);
-  window.addEventListener('keydown',unlock);
-  window.addEventListener('touchstart',unlock);
-  window.addEventListener('scroll',unlock,{passive:true});
-  function ping(){
-    if(!actx)return;
-    try{
-      const now=actx.currentTime;
-      [[988,0],[1319,.13]].forEach(function(p){
-        const o=actx.createOscillator(),g=actx.createGain();
-        o.type='sine';o.frequency.value=p[0];
-        o.connect(g);g.connect(actx.destination);
-        const t=now+p[1];
-        g.gain.setValueAtTime(0,t);
-        g.gain.linearRampToValueAtTime(.28,t+.02);
-        g.gain.exponentialRampToValueAtTime(.0001,t+.32);
-        o.start(t);o.stop(t+.34);
-      });
-      if(navigator.vibrate)navigator.vibrate([60,40,60]);
-    }catch(e){}
-  }
-  function show(){
-    sessionStorage.setItem('g6pack_wa_notif','1');
-    const t=new Date();
-    const tm=document.getElementById('waTime');
-    if(tm)tm.textContent=t.getHours().toString().padStart(2,'0')+':'+t.getMinutes().toString().padStart(2,'0');
-    el.classList.add('show');
-    ping();
-    setTimeout(function(){el.classList.remove('show');},6000);
-  }
-  setTimeout(show,60000);
-})();
+
 
 /* ===== contador de vagas (por card: básico e PRO) ===== */
 (function(){
@@ -1105,24 +1060,24 @@ document.getElementById('yr').textContent=new Date().getFullYear();
   if(x)x.addEventListener('click',close);
   if(keep)keep.addEventListener('click',function(){
     close();
-    if(typeof fbq==='function')fbq('track','InitiateCheckout',{value:9.90,currency:'BRL',content_name:'Pack Basico GTA 6'});
+    sendCAPI('InitiateCheckout',{value:9.90,currency:'BRL',content_name:'Pack Basico GTA 6',content_type:'product',content_ids:['pack_basico_650']});
     window.location.href=basicUrl;
   });
   if(go)go.addEventListener('click',function(){
-    if(typeof fbq==='function')fbq('track','InitiateCheckout',{value:19.90,currency:'BRL',content_name:'Pack PRO GTA 6 (downsell R$19,90)'});
+    sendCAPI('InitiateCheckout',{value:19.90,currency:'BRL',content_name:'Pack PRO GTA 6 (downsell R$19,90)',content_type:'product',content_ids:['pack_pro_downsell']});
   });
   ov.addEventListener('click',function(e){if(e.target===ov)close();});
 })();
 
 /* Meta Pixel — InitiateCheckout nos botões de compra */
 document.addEventListener('DOMContentLoaded',function(){
-  if(typeof fbq!=='function')return;
+  if(typeof sendCAPI!=='function')return;
   var skip={btnBasic:1,dsGo:1,dsKeep:1};
   document.querySelectorAll('a[href*="pay.wiapy.com"]').forEach(function(a){
     if(skip[a.id])return; // tratados pelo fluxo de downsell
     a.addEventListener('click',function(){
       var pro=(a.href.indexOf('9TeHpXGYrZAW')>-1);
-      fbq('track','InitiateCheckout',{value:pro?29.90:9.90,currency:'BRL',content_name:pro?'Pack PRO GTA 6':'Pack Basico GTA 6'});
+      sendCAPI('InitiateCheckout',{value:pro?29.90:9.90,currency:'BRL',content_name:pro?'Pack PRO GTA 6':'Pack Basico GTA 6',content_type:'product',content_ids:[pro?'pack_pro_2000':'pack_basico_650']});
     });
   });
 });
