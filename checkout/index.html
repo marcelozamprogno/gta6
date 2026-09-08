@@ -766,12 +766,12 @@
       </div>
 
       <div class="pix-qr-container">
-        <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=00020126580014BR.GOV.BCB.PIX0136gta6pack@monetize.com.br520400005303986540529.905802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2" alt="QR Code PIX">
+        <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=00020126580014BR.GOV.BCB.PIX0136gta6pack@monetize.com.br520400005303986540529.905802BR5916KIT%20VIRAL6009SAO%20PAULO62070503***6304D1A2" alt="QR Code PIX">
       </div>
 
       <div style="font-size:12px; font-weight:700; color:var(--gold); margin-bottom:8px;">CÓDIGO PIX COPIA E COLA:</div>
       <div class="copia-cola-box" id="pixPayloadText">
-        00020126580014BR.GOV.BCB.PIX0136gta6pack@monetize.com.br520400005303986540529.905802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2
+        00020126580014BR.GOV.BCB.PIX0136gta6pack@monetize.com.br520400005303986540529.905802BR5916KIT%20VIRAL6009SAO%20PAULO62070503***6304D1A2
       </div>
 
       <button class="btn-copy" onclick="copyPixCode()">
@@ -791,7 +791,7 @@
   <!-- FOOTER -->
   <footer>
     <div style="font-family:'Outfit'; font-weight:900; font-size:18px; color:#fff; margin-bottom:8px;">PACK GTA 6 - OFICIAL</div>
-    <p>© <span id="year"></span> Agência GCC. Todos os direitos reservados. Compra 100% Criptografada e Segura.</p>
+    <p>© <span id="year"></span> KIT VIRAL GTA VI. Todos os direitos reservados. Compra 100% Criptografada e Segura.</p>
   </footer>
 
   <script>
@@ -971,13 +971,13 @@
             alertBox.style.display = 'block';
           }
 
-          const pixPayload = `00020126580014BR.GOV.BCB.PIX0136invictuspayv2@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2`;
+          const pixPayload = `00020126580014BR.GOV.BCB.PIX0136invictuspayv2@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916KIT%20VIRAL6009SAO%20PAULO62070503***6304D1A2`;
           document.getElementById('pixPayloadText').textContent = pixPayload;
           document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixPayload)}`;
         }
       } catch (err) {
         console.error('InvictusPay v2 API error:', err);
-        const pixPayload = `00020126580014BR.GOV.BCB.PIX0136invictuspayv2@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916Agencia%20GCC%20GTA66009SAO%20PAULO62070503***6304D1A2`;
+        const pixPayload = `00020126580014BR.GOV.BCB.PIX0136invictuspayv2@monetizecomgta6.com.br5204000053039865405${data.numericPrice}5802BR5916KIT%20VIRAL6009SAO%20PAULO62070503***6304D1A2`;
         document.getElementById('pixPayloadText').textContent = pixPayload;
         document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pixPayload)}`;
       } finally {
