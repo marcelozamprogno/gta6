@@ -26,7 +26,7 @@ module.exports = async function handler(req, res) {
 
     const offerHashToUse = data.offer_hash && data.offer_hash !== 'off_gta6_pack' && data.offer_hash !== 'off_exemplo' 
         ? data.offer_hash 
-        : 'off_01m1hc3hep92staz0kdmr2b2vy'; // ID seguro padrão caso o da Vercel falhe
+        : (amountCents === 2990 ? 'off_01m1n4txnfxqj31zwsnvgksz6j' : 'off_01m1hc3hep92staz0kdmr2b2vy');
 
     const payload = {
       amount: amountCents,
