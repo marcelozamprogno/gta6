@@ -198,8 +198,16 @@
         const alertMsg = document.getElementById('pixApiAlertMsg');
 
         let pixCode = '';
+        let txId = '';
         if (result && result.success && result.pix_code) {
           pixCode = result.pix_code;
+        }
+        if (result && result.raw && result.raw.data && result.raw.data.id) {
+          txId = result.raw.data.id;
+        } else if (result && result.raw && result.raw.id) {
+          txId = result.raw.id;
+        } else if (result && result.transaction_id) {
+          txId = result.transaction_id;
         }
 
         if (pixCode) {
@@ -245,7 +253,7 @@
         });
 
         // Simular verificação de pagamento e disparar Purchase quando aprovado
-        startPaymentCheck(leadData);
+        startPaymentCheck(leadData, txId);
       }
     }
 
@@ -282,14 +290,28 @@
 
     // Verificação de pagamento - dispara Purchase quando aprovado
     var paymentCheckInterval = null;
-    function startPaymentCheck(planInfo) {
+    function startPaymentCheck(planInfo, txId) {
+      if (!txId) {
+        console.warn('No transaction ID to check payment status.');
+        return;
+      }
       if (paymentCheckInterval) clearInterval(paymentCheckInterval);
       var checkCount = 0;
-      paymentCheckInterval = setInterval(function() {
+      paymentCheckInterval = setInterval(async function() {
         checkCount++;
-        // Verifica status via InvictusPay a cada 10s por até 30 min
+        // Verifica status a cada 10s por até 30 min
         if (checkCount > 180) { clearInterval(paymentCheckInterval); return; }
-        // O usuário pode chamar manualmente firePurchase() ou ele é chamado via webhook
+        
+        try {
+          const res = await fetch('/api/check-payment?txid=' + txId);
+          const data = await res.json();
+          if (data && data.success && data.paid) {
+            clearInterval(paymentCheckInterval);
+            firePurchase();
+          }
+        } catch (e) {
+          console.error('Error checking payment:', e);
+        }
       }, 10000);
     }
 

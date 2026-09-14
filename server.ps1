@@ -49,6 +49,9 @@ while ($listener.IsListening) {
         $response.AddHeader("Access-Control-Allow-Origin", "*")
         $response.AddHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         $response.AddHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Api-Key")
+        $response.AddHeader("Cache-Control", "no-cache, no-store, must-revalidate")
+        $response.AddHeader("Pragma", "no-cache")
+        $response.AddHeader("Expires", "0")
 
         if ($method -eq "OPTIONS") {
             $response.StatusCode = 200
@@ -150,6 +153,51 @@ while ($listener.IsListening) {
             $buffer = [System.Text.Encoding]::UTF8.GetBytes($resObj)
             $response.ContentLength64 = $buffer.Length
             $response.OutputStream.Write($buffer, 0, $buffer.Length)
+            $response.OutputStream.Close()
+            continue
+        }
+
+        # API ENDPOINT: GET /api/check-payment
+        if ($rawPath -eq "/api/check-payment" -and $method -eq "GET") {
+            $txId = $request.QueryString["txid"]
+            if (-not $txId) {
+                $response.StatusCode = 400
+                $buffer = [System.Text.Encoding]::UTF8.GetBytes('{"success":false,"error":"Missing txid"}')
+                $response.ContentType = "application/json; charset=utf-8"
+                $response.ContentLength64 = $buffer.Length
+                $response.OutputStream.Write($buffer, 0, $buffer.Length)
+                $response.OutputStream.Close()
+                continue
+            }
+
+            try {
+                $invRes = Invoke-WebRequest -Uri "https://api.invictuspayv2.com.br/api/v1/transactions/$txId" -Method Get -Headers @{
+                    "X-Api-Key" = $INVICTUS_X_API_KEY
+                    "accept" = "application/json"
+                } -UseBasicParsing -TimeoutSec 15
+
+                $invictusResult = ConvertFrom-Json $invRes.Content
+                $statusStr = if ($invictusResult.data -and $invictusResult.data.status) { [string]$invictusResult.data.status.ToLower() } else { "" }
+                $isPaid = ($statusStr -eq "paid" -or $statusStr -eq "approved" -or $statusStr -eq "paga")
+
+                $resObj = @{
+                    success = $true
+                    paid = $isPaid
+                    status = $statusStr
+                    raw = $invictusResult
+                } | ConvertTo-Json -Depth 5
+
+                $response.ContentType = "application/json; charset=utf-8"
+                $buffer = [System.Text.Encoding]::UTF8.GetBytes($resObj)
+                $response.ContentLength64 = $buffer.Length
+                $response.OutputStream.Write($buffer, 0, $buffer.Length)
+            } catch {
+                $response.StatusCode = 500
+                $buffer = [System.Text.Encoding]::UTF8.GetBytes('{"success":false,"error":"Internal Server Error"}')
+                $response.ContentType = "application/json; charset=utf-8"
+                $response.ContentLength64 = $buffer.Length
+                $response.OutputStream.Write($buffer, 0, $buffer.Length)
+            }
             $response.OutputStream.Close()
             continue
         }

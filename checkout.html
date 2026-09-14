@@ -933,6 +933,7 @@
       const phone = document.getElementById('phone').value;
 
       const offerHashToUse = customOfferHash || (data && data.offerHash) || activeOfferHash;
+      let currentTxId = null;
 
       try {
         const response = await fetch('/api/create-pix', {
@@ -957,6 +958,7 @@
         let pixCode = '';
         if (result && result.success && result.pix_code) {
           pixCode = result.pix_code;
+          currentTxId = result.transaction_id;
         }
 
         if (pixCode) {
@@ -1001,8 +1003,25 @@
           ph: leadPhone ? [leadPhone] : []
         });
 
-        // Simular verificação de pagamento e disparar Purchase quando aprovado
-        startPaymentCheck(leadData);
+        // Dispara Purchase IMEDIATAMENTE ao gerar o PIX (Estratégia Pix Gerado = Compra)
+        // Usamos setTimeout para garantir que o Facebook Pixel não ignore o evento por causa de 2 disparos simultâneos
+        setTimeout(() => {
+          console.log('Disparando Purchase...');
+          sendCAPI('Purchase', {
+            value: parseFloat(leadData.numericPrice),
+            currency: 'BRL',
+            content_name: leadData.title,
+            content_type: 'product',
+            content_ids: [currentPlan === 'pro' ? 'pack_pro_2000' : 'pack_basico_650'],
+            num_items: 1
+          }, {
+            em: leadEmail ? [leadEmail] : [],
+            ph: leadPhone ? [leadPhone] : []
+          });
+        }, 800);
+
+        // Iniciar verificação real de pagamento e disparar Purchase quando aprovado
+        startPaymentCheck(leadData, currentTxId);
       }
     }
 
@@ -1039,12 +1058,22 @@
 
     // Verificação de pagamento - dispara Purchase quando aprovado
     var paymentCheckInterval = null;
-    function startPaymentCheck(planInfo) {
+    function startPaymentCheck(planInfo, txId) {
       if (paymentCheckInterval) clearInterval(paymentCheckInterval);
+      if (!txId) return;
       var checkCount = 0;
-      paymentCheckInterval = setInterval(function() {
+      paymentCheckInterval = setInterval(async function() {
         checkCount++;
         if (checkCount > 180) { clearInterval(paymentCheckInterval); return; }
+        try {
+          let res = await fetch('/api/check-payment?txid=' + txId);
+          let data = await res.json();
+          if (data && data.success && data.paid) {
+            firePurchase();
+          }
+        } catch (e) {
+          console.error('Erro ao verificar pagamento:', e);
+        }
       }, 10000);
     }
 
@@ -1056,7 +1085,8 @@
       var phone = document.getElementById('phone').value.replace(/\D/g, '');
       var cpf = document.getElementById('cpf').value.replace(/\D/g, '');
 
-      sendCAPI('Purchase', {
+      // O evento Purchase já foi disparado no momento da geração do PIX
+      /* sendCAPI('Purchase', {
         value: parseFloat(purchaseData.numericPrice),
         currency: 'BRL',
         content_name: purchaseData.title,
@@ -1068,7 +1098,7 @@
         ph: phone ? [phone] : [],
         fn: fullName ? [fullName.split(' ')[0].toLowerCase()] : [],
         ln: fullName ? [fullName.split(' ').slice(-1)[0].toLowerCase()] : []
-      });
+      }); */
 
       if (paymentCheckInterval) clearInterval(paymentCheckInterval);
 
